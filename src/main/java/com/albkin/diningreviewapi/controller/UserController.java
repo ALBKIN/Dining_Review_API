@@ -2,7 +2,10 @@ package com.albkin.diningreviewapi.controller;
 
 import com.albkin.diningreviewapi.model.User;
 import com.albkin.diningreviewapi.repository.UserRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -25,10 +28,26 @@ public class UserController {
     }
     // method to create new user
     @PostMapping("/users")
+    @ResponseStatus(HttpStatus.CREATED)
     public User createNewUser(@RequestBody User user) {
-        User newUser = this.userRepository.save(user);
-        return user;
+      confirmUser(user);
+      this.userRepository.save(user);
+      return user;  // OPTIONAL?
     }
 
+    private void confirmUser(User user) {
+        confirmUserName(user.getUserName());
+
+        Optional<User> existingUser = this.userRepository.findUserByUserName(user.getUserName());
+        if (existingUser.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User with the same username already exists");
+        }
+    }
+
+    private void confirmUserName(String userName) {
+        if (ObjectUtils.isEmpty(userName)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username cannot be null or empty");
+        }
+    }
 
 }
