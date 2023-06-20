@@ -64,11 +64,30 @@ public class UserController {
         copyUserInfoFrom(updatedUser, existingUser);
         this.userRepository.save(existingUser);
         return existingUser;
-
     }
 
     private void copyUserInfoFrom(User updatedUser, User existingUser) {
-
+        if (ObjectUtils.isEmpty(updatedUser.getUserName())) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "User is not allowed to be updated without providing a proper username.");
+        }
+        if (!ObjectUtils.isEmpty(updatedUser.getCity())) {
+            existingUser.setCity(updatedUser.getCity());
+        }
+        if (!ObjectUtils.isEmpty(updatedUser.getState())) {
+            existingUser.setState(updatedUser.getState());
+        }
+        if (!ObjectUtils.isEmpty(updatedUser.getZipCode())) {
+            existingUser.setZipCode(updatedUser.getZipCode());
+        }
+        if (!ObjectUtils.isEmpty(updatedUser.getPeanutAllergy())) {
+            existingUser.setPeanutAllergy(updatedUser.getPeanutAllergy());
+        }
+        if (!ObjectUtils.isEmpty(updatedUser.getDairyAllergy())) {
+            existingUser.setDairyAllergy(updatedUser.getDairyAllergy());
+        }
+        if (!ObjectUtils.isEmpty(updatedUser.getEggAllergy())) {
+            existingUser.setEggAllergy(updatedUser.getEggAllergy());
+        }
     }
 
     // method to check if whether user already exists
