@@ -34,7 +34,7 @@ public class DiningReviewController {
 
         Optional<Restaurant> optionalRestaurant = this.restauranRepository.findById(diningReview.getRestaurantId());
         if (optionalRestaurant.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Can't add a review for non existing restaurant")
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Can't add a review for non existing restaurant");
         }
         diningReview.setReviewStatus(ReviewStatus.PENDING);
         this.diningReviewRepository.save(diningReview);
