@@ -4,7 +4,7 @@ import com.albkin.diningreviewapi.model.DiningReview;
 import com.albkin.diningreviewapi.model.Restaurant;
 import com.albkin.diningreviewapi.model.ReviewStatus;
 import com.albkin.diningreviewapi.repository.DiningReviewRepository;
-import com.albkin.diningreviewapi.repository.RestauranRepository;
+import com.albkin.diningreviewapi.repository.RestaurantRepository;
 import com.albkin.diningreviewapi.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +18,12 @@ public class DiningReviewController {
 
     private final DiningReviewRepository diningReviewRepository;
     private final UserRepository userRepository;
-    private final RestauranRepository restauranRepository;
+    private final RestaurantRepository restaurantRepository;
 
-    public DiningReviewController(DiningReviewRepository diningReviewRepository, UserRepository userRepository, RestauranRepository restauranRepository) {
+    public DiningReviewController(DiningReviewRepository diningReviewRepository, UserRepository userRepository, RestaurantRepository restaurantRepository) {
         this.diningReviewRepository = diningReviewRepository;
         this.userRepository = userRepository;
-        this.restauranRepository = restauranRepository;
+        this.restaurantRepository = restaurantRepository;
     }
 
     // method to post review as registered user
@@ -32,7 +32,7 @@ public class DiningReviewController {
     public DiningReview createNewReview(@RequestBody DiningReview diningReview) {
         confirmUserReview(diningReview);
 
-        Optional<Restaurant> optionalRestaurant = this.restauranRepository.findById(diningReview.getRestaurantId());
+        Optional<Restaurant> optionalRestaurant = this.restaurantRepository.findById(diningReview.getRestaurantId());
         if (optionalRestaurant.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Can't add a review for non existing restaurant");
         }
