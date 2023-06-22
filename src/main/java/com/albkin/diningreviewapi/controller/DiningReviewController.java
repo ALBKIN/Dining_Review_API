@@ -3,10 +3,12 @@ package com.albkin.diningreviewapi.controller;
 import com.albkin.diningreviewapi.model.DiningReview;
 import com.albkin.diningreviewapi.model.Restaurant;
 import com.albkin.diningreviewapi.model.ReviewStatus;
+import com.albkin.diningreviewapi.model.User;
 import com.albkin.diningreviewapi.repository.DiningReviewRepository;
 import com.albkin.diningreviewapi.repository.RestaurantRepository;
 import com.albkin.diningreviewapi.repository.UserRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -43,6 +45,21 @@ public class DiningReviewController {
 
     // confirm if the review is valid and if user and restaurant exists (only existing users can post dining reviews)
     private void confirmUserReview(DiningReview diningReview) {
+        if (ObjectUtils.isEmpty(diningReview.getReviewByUsername())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        if (ObjectUtils.isEmpty(diningReview.getRestaurantId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        if (ObjectUtils.isEmpty(diningReview.getPeanutScore()) &&
+            ObjectUtils.isEmpty(diningReview.getDairyScore()) &&
+            ObjectUtils.isEmpty(diningReview.getEggScore())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        Optional<User> optionalUser = this.userRepository.findUserByUserName(diningReview.getReviewByUsername());
+        if (optionalUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
     }
 }
 
