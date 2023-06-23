@@ -25,6 +25,7 @@ public class UserController {
     // method to fetch user by ID
     @GetMapping("/users/{id}")
     public Optional<User> getUserById(@PathVariable("id") Long id) {
+
         return this.userRepository.findById(id);
     }
 
