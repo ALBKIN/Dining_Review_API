@@ -7,6 +7,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -57,5 +58,23 @@ public class RestaurantController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return optionalRestaurant;
+    }
+
+    // method to to fetch restaurants that match a given zip code and that also have at least one user-submitted score for a given allergy sorted in descending order.
+    @GetMapping("/search")
+    public Iterable<Restaurant> getRestaurantsByZipCodeAndAllergyScore(@RequestParam String zipCode, @RequestParam String allergy) {
+        validateZipCode(zipCode);
+
+        Iterable<Restaurant> restaurants = Collections.EMPTY_LIST;
+        if (allergy.equalsIgnoreCase("peanut")) {
+            restaurants = this.restaurantRepository.findRestaurantByZipCodeAndPeanutScoreNotNullOrderByPeanutScore(zipCode);
+        } else if (allergy.equalsIgnoreCase("dairy")) {
+            restaurants = this.restaurantRepository.findRestaurantByZipCodeAndDairyScoreNotNullOrderByPeanutScore(zipCode);
+        } else if (allergy.equalsIgnoreCase("egg")) {
+            restaurants = this.restaurantRepository.findRestaurantByZipCodeAndEggScoreNotNullOrderByPeanutScore(zipCode);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return restaurants;
     }
 }
